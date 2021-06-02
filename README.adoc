@@ -1,0 +1,10 @@
+= glustercli2 - GlusterFS CLI Python bindings
+
+Alternative library to https://github.com/gluster/glustercli-python[gluster/glustercli-python]
+
+* Thread safe - No global variables
+* Multiple CLI instance can be used - glustercli-python project uses global variables to set the `ssh`, gluster binary path etc. Due to this it is not possible to manage multiple clusters if the environment is different.
+* Three supported modes for running the command: `local`, `docker` and `ssh`
+* Simple intuitive API design
+
+link:docs/[Documentation]

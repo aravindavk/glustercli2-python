@@ -1,0 +1,54 @@
+= GlusterCLI
+
+[source,python]
+----
+from glustercli2 import GlusterCLI
+
+# With default settings
+gcli = GlusterCLI()
+
+# Set gluster executable path
+gcli = GlusterCLI(exec_path="/usr/local/sbin/gluster")
+
+# Set Current Hostname so that Localhost will be replaced
+gcli = GlusterCLI(
+    exec_path="/usr/local/sbin/gluster",
+   current_host="server1.kadalu"
+)
+----
+
+== Run via SSH
+
+[source,python]
+----
+from glustercli2 import GlusterCLI
+
+gcli = GlusterCLI()
+
+gcli.set_ssh_params(
+    "remote1.kadalu",
+    port=22,
+    key="/root/.ssh/id_rsa",
+    user="root",
+    use_sudo=False
+)
+
+gcli.list_peers()
+----
+
+== Run via Docker
+
+[source,python]
+----
+from glustercli2 import GlusterCLI
+
+gcli = GlusterCLI()
+
+gcli.set_container_name("remote1.kadalu")
+
+gcli.list_peers()
+----
+
+== Documentation
+* link:peers-management.adoc[Peers Management]
+* link:volumes-management.adoc[Volumes Management]
