@@ -46,6 +46,13 @@ class GlusterCLI:
 
         # Set Current Host to replace `localhost` in Peers list output
         gcli = GlusterCLI(current_host="server1.kadalu")
+
+        # Set Glusterd socket Path
+        gcli = GlusterCLI(
+            exec_path="/usr/local/sbin/gluster",
+            current_host="server1.kadalu",
+            socket_path="/usr/local/var/run/glusterd.sock"
+        )
         ----
         """
         self.exec_path = exec_path
@@ -147,6 +154,9 @@ class GlusterCLI:
     def exec_gluster_command(self, cmd, xml=True):
         # TODO: Set Socket path
         gcmd = [self.exec_path, "--mode=script"]
+
+        if self.socket_path != "":
+            gcmd.append(f"--glusterd-sock={self.socket_path}")
 
         if xml:
             gcmd.append("--xml")

@@ -17,6 +17,13 @@ gcli = GlusterCLI(exec_path="/usr/local/sbin/gluster")
 
 # Set Current Host to replace `localhost` in Peers list output
 gcli = GlusterCLI(current_host="server1.kadalu")
+
+# Set Glusterd socket Path
+gcli = GlusterCLI(
+    exec_path="/usr/local/sbin/gluster",
+    current_host="server1.kadalu",
+    socket_path="/usr/local/var/run/glusterd.sock"
+)
 ----
 
 
