@@ -147,6 +147,19 @@ gcli.set_ssh_params(
 ----
 
 
+== GlusterFS Version
+
+Return the GlusterFS version
+
+[source,python]
+----
+from glustercli2 import GlusterCLI
+
+gcli = GlusterCLI()
+print(gcli.version())
+----
+
+
 == Get Volume instance.
 
 Example:

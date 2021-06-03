@@ -164,6 +164,24 @@ class GlusterCLI:
         gcmd += cmd
         return execute(self._full_command(gcmd))
 
+    def version(self):
+        """
+        == GlusterFS Version
+
+        Return the GlusterFS version
+
+        [source,python]
+        ----
+        from glustercli2 import GlusterCLI
+
+        gcli = GlusterCLI()
+        print(gcli.version())
+        ----
+        """
+        cmd = [self.exec_path, "--version"]
+        out = execute(self._full_command(cmd))
+        return out.split("\n")[0]
+
     def list_peers(self):
         """
         == Peers List
