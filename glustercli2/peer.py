@@ -1,4 +1,4 @@
-from .parsers import parsed_pool_list
+from glustercli2.parsers import parsed_pool_list
 
 
 class Peer:
@@ -19,7 +19,7 @@ class Peer:
 
     @classmethod
     def add(cls, cli, hostname):
-        self.peer_cmd(cli, ["attach", hostname])
+        cls.peer_cmd(cli, ["attach", hostname])
 
     def detach(self):
         self.peer_cmd(self.cli, ["detach", self.hostname])

@@ -1,4 +1,4 @@
-from .parsers import parsed_volume_info, parsed_volume_status
+from glustercli2.parsers import parsed_volume_info, parsed_volume_status
 
 
 class Volume:
@@ -30,10 +30,6 @@ class Volume:
 
     def delete(self):
         cmd = ["delete", self.name]
-
-        if force:
-            cmd.append("force")
-
         self.volume_cmd(self.cli, cmd)
 
     @classmethod
@@ -57,24 +53,24 @@ class Volume:
 
     def info(self, status=False):
         if not status:
-            data = self._info(cli, self.name)
+            data = self._info(self.cli, self.name)
         else:
-            data = self._status(cli, self.name)
+            data = self._status(self.cli, self.name)
 
         return data[0]
 
-    def option_set(self, cli, opts):
+    def option_set(self, opts):
         cmd = ["set", self.name]
-        for k, v in opts.items():
-            cmd += [k, v]
+        for key, value in opts.items():
+            cmd += [key, value]
 
-        cls.volume_cmd(cli, cmd)
+        self.volume_cmd(self.cli, cmd)
 
-    def option_reset(self, cli, opts):
+    def option_reset(self, opts):
         cmd = ["set", self.name]
         cmd += opts
 
-        cls.volume_cmd(cli, cmd)
+        self.volume_cmd(self.cli, cmd)
 
     @classmethod
     def create(cls, cli, name, bricks, opts):

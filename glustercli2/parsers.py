@@ -1,10 +1,9 @@
-import copy
 import math
 import xml.etree.cElementTree as etree
 
-from .types import (
+from glustercli2.types import (
     NodeInfo, CommandOutputParseError, VolumeInfo,
-    SubvolInfo, BrickInfo, OptionInfo, PortsInfo
+    SubvolInfo, BrickInfo, OptionInfo
 )
 
 ParseError = etree.ParseError if hasattr(etree, 'ParseError') else SyntaxError
@@ -35,7 +34,7 @@ def parsed_pool_list(data):
 
             pools.append(peer)
         except (ParseError, AttributeError, ValueError) as err:
-            raise CommandOutputParseError(err)
+            raise CommandOutputParseError from err
 
     return pools
 
@@ -49,6 +48,7 @@ def _subvol_health(subvol):
     health = HEALTH_UP
     if len(subvol.bricks) != up_bricks:
         health = HEALTH_DOWN
+        # noqa # pylint: disable=c-extension-no-member
         if subvol.type == TYPE_REPLICATE and \
           up_bricks >= math.ceil(subvol.replica_count/2):
             health = HEALTH_PARTIAL
@@ -146,7 +146,9 @@ def _parse_a_vol(volume_el):
     volume.distribute_count = int(volume_el.find('distCount').text)
     volume.replica_count = int(volume_el.find('replicaCount').text)
     volume.disperse_count = int(volume_el.find('disperseCount').text)
-    volume.disperse_redundancy_count = int(volume_el.find('redundancyCount').text)
+    volume.disperse_redundancy_count = int(
+        volume_el.find('redundancyCount').text
+    )
     transport = volume_el.find('transport').text
     volume.snapshot_count = int(volume_el.find('snapshotCount').text)
     bricks = []
@@ -180,9 +182,7 @@ def _parse_a_vol(volume_el):
 
 def _group_subvols(volumes):
     out_volumes = []
-    for idx, data in enumerate(volumes):
-        vol, bricks = data
-
+    for vol, bricks in volumes:
         subvol_type = vol.type.split("_")[-1]
         subvol_bricks_count = 1
 
@@ -252,7 +252,7 @@ def parsed_volume_info(info):
         try:
             volumes.append(_parse_a_vol(volume_el))
         except (ParseError, AttributeError, ValueError) as err:
-            raise GlusterCmdOutputParseError(err)
+            raise CommandOutputParseError from err
 
     return _group_subvols(volumes)
 
@@ -264,7 +264,7 @@ def parsed_volume_status(data, volinfo):
         try:
             bricks_data.append(_parse_a_brick_status(brick_el))
         except (ParseError, AttributeError, ValueError) as err:
-            raise CommandOutputParseError(err)
+            raise CommandOutputParseError from err
 
     tmp_brick_status = {}
     for brk in bricks_data:

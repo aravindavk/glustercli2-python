@@ -1,21 +1,25 @@
 import json
 
+
 class CommandOutputParseError(Exception):
     pass
 
+
+def is_class(value):
+    return hasattr(value, "__dict__") and hasattr(value, "__class__")
+
+
+def is_list(value):
+    return hasattr(value, "__iter__")  and not isinstance(value, str)
+
+
 class Info:
-    def is_class(self, value):
-        return hasattr(value, "__dict__") and hasattr(value, "__class__")
-
-    def is_list(self, value):
-        return hasattr(value, "__iter__")  and not isinstance(value, str)
-
     def list_to_dict(self, value):
         values = []
         for val in value:
-            if self.is_class(val):
+            if is_class(val):
                 values.append(self.cls_to_dict(val))
-            elif self.is_list(val):
+            elif is_list(val):
                 values.append(self.list_to_dict(val))
             else:
                 values.append(val)
@@ -25,9 +29,9 @@ class Info:
     def cls_to_dict(self, value):
         vals = {}
         for key, val in value.__dict__.items():
-            if self.is_class(val):
+            if is_class(val):
                 vals[key] = self.cls_to_dict(val)
-            elif self.is_list(val):
+            elif is_list(val):
                 vals[key] = self.list_to_dict(val)
             else:
                 vals[key] = val
@@ -35,7 +39,6 @@ class Info:
         return vals
 
     def to_json(self):
-        data = self.__dict__
         outdata = self.cls_to_dict(self)
         return json.dumps(outdata)
 
@@ -48,6 +51,7 @@ class Info:
 
 class NodeInfo(Info):
     def __init__(self):
+        # noqa # pylint: disable=invalid-name
         self.id = ""
         self.hostname = ""
         self.state = "Disconnected"
@@ -59,6 +63,7 @@ class PortsInfo(Info):
         self.rdma = 0
 
 
+# noqa # pylint: disable=too-many-instance-attributes
 class BrickInfo(Info):
     def __init__(self):
         self.node = NodeInfo()
@@ -79,22 +84,24 @@ class BrickInfo(Info):
         self.ports = PortsInfo()
 
 
+# noqa # pylint: disable=too-many-instance-attributes
 class SubvolInfo(Info):
     def __init__(self):
-      self.type = ""
-      self.health = ""
-      self.replica_count = 0
-      self.disperse_count = 0
-      self.disperse_redundancy_count = 0
-      self.arbiter_count = 0
-      self.size_total = 0
-      self.size_free = 0
-      self.inodes_total = 0
-      self.inodes_free = 0
-      self.size_used = 0
-      self.inodes_used = 0
-      self.up_bricks = 0
-      self.bricks = []
+        self.type = ""
+        self.health = ""
+        self.replica_count = 0
+        self.disperse_count = 0
+        self.disperse_redundancy_count = 0
+        self.arbiter_count = 0
+        self.size_total = 0
+        self.size_free = 0
+        self.inodes_total = 0
+        self.inodes_free = 0
+        self.size_used = 0
+        self.inodes_used = 0
+        self.up_bricks = 0
+        self.bricks = []
+
 
 class OptionInfo(Info):
     def __init__(self):
@@ -102,31 +109,34 @@ class OptionInfo(Info):
         self.value = ""
 
 
+# noqa # pylint: disable=too-many-instance-attributes
 class VolumeInfo(Info):
     def __init__(self):
-      self.name = ""
-      self.id = ""
-      self.state = ""
-      self.snapshot_count = 0
-      self.bricks_count = 0
-      self.distribute_count = 0
-      self.replica_count = 0
-      self.arbiter_count = 0
-      self.disperse_count = 0
-      self.disperse_redundancy_count = 0
-      self.type = ""
-      self.health = ""
-      self.transport = ""
-      self.size_total = 0
-      self.size_free = 0
-      self.inodes_total = 0
-      self.inodes_free = 0
-      self.size_used = 0
-      self.inodes_used = 0
-      self.up_subvols = 0
-      self.subvols = []
-      self.options = []
+        self.name = ""
+        # noqa # pylint: disable=invalid-name
+        self.id = ""
+        self.state = ""
+        self.snapshot_count = 0
+        self.bricks_count = 0
+        self.distribute_count = 0
+        self.replica_count = 0
+        self.arbiter_count = 0
+        self.disperse_count = 0
+        self.disperse_redundancy_count = 0
+        self.type = ""
+        self.health = ""
+        self.transport = ""
+        self.size_total = 0
+        self.size_free = 0
+        self.inodes_total = 0
+        self.inodes_free = 0
+        self.size_used = 0
+        self.inodes_used = 0
+        self.up_subvols = 0
+        self.subvols = []
+        self.options = []
 
+# noqa # pylint: disable=too-few-public-methods
 class VolumeCreateOptions:
     def __init__(self):
         self.replica_count = 1
