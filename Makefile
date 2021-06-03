@@ -3,3 +3,7 @@ pylint:
 
 docgen:
 	python3 docgen.py > docs/README.adoc
+
+publish:
+	python3 setup.py sdist
+	twine upload dist/glustercli2-${VERSION}.tar.gz

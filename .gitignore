@@ -1,1 +1,4 @@
 __pycache__
+build
+dist
+glustercli2.egg-info
