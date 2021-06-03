@@ -7,7 +7,7 @@ class Volume:
         self.name = volume_name
 
     @classmethod
-    def _volume_cmd(cls, cli, cmd):
+    def volume_cmd(cls, cli, cmd):
         return cli.exec_gluster_command(
             ["volume"] + cmd
         )

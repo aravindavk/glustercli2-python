@@ -113,6 +113,13 @@ class GlusterCLI:
         self.ssh_key = key
         self.ssh_use_sudo = use_sudo
 
+    def get_current_host(self):
+        if self.current_host != "":
+            return self.current_host
+
+        cmd = self._full_command(["hostname"])
+        return execute(cmd).strip()
+
     def _full_command(self, cmd):
         if self.remote_plugin == "docker":
             return [
@@ -145,7 +152,7 @@ class GlusterCLI:
             gcmd.append("--xml")
 
         gcmd += cmd
-        return execute(self.full_command(gcmd))
+        return execute(self._full_command(gcmd))
 
     def list_peers(self):
         """

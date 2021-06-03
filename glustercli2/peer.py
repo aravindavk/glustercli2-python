@@ -15,7 +15,12 @@ class Peer:
     @classmethod
     def list(cls, cli):
         out = cli.exec_gluster_command(["pool", "list"])
-        return parsed_pool_list(out)
+        peers = parsed_pool_list(out)
+        for peer in peers:
+            if peer.hostname == "localhost":
+                peer.hostname = cli.get_current_host()
+
+        return peers
 
     @classmethod
     def add(cls, cli, hostname):
