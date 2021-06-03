@@ -7,12 +7,30 @@ class Volume:
         self.name = volume_name
 
     @classmethod
-    def volume_cmd(cls, cli, cmd):
+    def _volume_cmd(cls, cli, cmd):
         return cli.exec_gluster_command(
             ["volume"] + cmd
         )
 
     def start(self, force=False):
+        """
+        == Volume Start
+
+        Start the Volume.
+
+        Example:
+
+        [source,python]
+        ----
+        from glustercli2 import GlusterCLI
+
+        gcli = GlusterCLI()
+        gcli.volume("gvol1").start()
+
+        # or using force option
+        gcli.volume("gvol1").start(force=True)
+        ----
+        """
         cmd = ["start", self.name]
 
         if force:
@@ -21,6 +39,24 @@ class Volume:
         self.volume_cmd(self.cli, cmd)
 
     def stop(self, force=False):
+        """
+        == Volume Stop
+
+        Stop the Volume.
+
+        Example:
+
+        [source,python]
+        ----
+        from glustercli2 import GlusterCLI
+
+        gcli = GlusterCLI()
+        gcli.volume("gvol1").stop()
+
+        # or using force option
+        gcli.volume("gvol1").stop(force=True)
+        ----
+        """
         cmd = ["stop", self.name]
 
         if force:
@@ -29,6 +65,21 @@ class Volume:
         self.volume_cmd(self.cli, cmd)
 
     def delete(self):
+        """
+        == Volume Delete
+
+        Delete the Volume.
+
+        Example:
+
+        [source,python]
+        ----
+        from glustercli2 import GlusterCLI
+
+        gcli = GlusterCLI()
+        gcli.volume("gvol1").delete()
+        ----
+        """
         cmd = ["delete", self.name]
         self.volume_cmd(self.cli, cmd)
 
@@ -52,6 +103,22 @@ class Volume:
         return cls._info(cli) if not status else cls._status(cli)
 
     def info(self, status=False):
+        """
+        == Volume Info and Status
+
+        Get Volume info or Status.
+
+        Example:
+
+        [source,python]
+        ----
+        from glustercli2 import GlusterCLI
+
+        gcli = GlusterCLI()
+        gcli.volume("gvol1").info()
+        gcli.volume("gvol1").info(status=True)
+        ----
+        """
         if not status:
             data = self._info(self.cli, self.name)
         else:
@@ -60,6 +127,23 @@ class Volume:
         return data[0]
 
     def option_set(self, opts):
+        """
+        == Set Volume Option
+
+        Set Volume Option.
+
+        Example:
+
+        [source,python]
+        ----
+        from glustercli2 import GlusterCLI
+
+        gcli = GlusterCLI()
+        gcli.volume("gvol1").option_set({
+            "changelog.changelog": "on"
+        })
+        ----
+        """
         cmd = ["set", self.name]
         for key, value in opts.items():
             cmd += [key, value]
@@ -67,6 +151,21 @@ class Volume:
         self.volume_cmd(self.cli, cmd)
 
     def option_reset(self, opts):
+        """
+        == Reset Volume Option
+
+        Reset Volume Option.
+
+        Example:
+
+        [source,python]
+        ----
+        from glustercli2 import GlusterCLI
+
+        gcli = GlusterCLI()
+        gcli.volume("gvol1").option_reset(["changelog.changelog"])
+        ----
+        """
         cmd = ["set", self.name]
         cmd += opts
 

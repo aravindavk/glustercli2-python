@@ -29,6 +29,25 @@ class CommandException(Exception):
 # noqa # pylint: disable=too-many-instance-attributes
 class GlusterCLI:
     def __init__(self, exec_path="gluster", current_host="", socket_path=""):
+        """
+        == Gluster CLI instance.
+
+        Example:
+
+        [source,python]
+        ----
+        from glustercli2 import GlusterCLI
+
+        # With default Options
+        gcli = GlusterCLI()
+
+        # With custom gluster executable path
+        gcli = GlusterCLI(exec_path="/usr/local/sbin/gluster")
+
+        # Set Current Host to replace `localhost` in Peers list output
+        gcli = GlusterCLI(current_host="server1.kadalu")
+        ----
+        """
         self.exec_path = exec_path
         self.current_host = current_host
         self.socket_path = socket_path
@@ -39,26 +58,62 @@ class GlusterCLI:
         self.ssh_key = DEFAULT_SSH_KEY
         self.ssh_use_sudo = DEFAULT_SSH_USE_SUDO
 
-    def set_remote_plugin(self, name):
+    def _set_remote_plugin(self, name):
         # Validate name: local|ssh|docker
         self.remote_plugin = name
 
     def set_container_name(self, name):
-        self.set_remote_plugin("docker")
+        """
+        == Docker exec
+
+        Set Remote plugin as docker and set the container name
+
+        Example:
+
+        [source,python]
+        ----
+        from glustercli2 import GlusterCLI
+
+        gcli = GlusterCLI()
+        gcli.set_container_name("server1.kadalu")
+        ----
+        """
+        self._set_remote_plugin("docker")
         self.remote_host = name
 
     # noqa # pylint: disable=too-many-arguments
     def set_ssh_params(self, hostname, port=DEFAULT_SSH_PORT,
                        user=DEFAULT_SSH_USER, key=DEFAULT_SSH_KEY,
                        use_sudo=DEFAULT_SSH_USE_SUDO):
-        self.set_remote_plugin("ssh")
+        """
+        == Execute over SSH
+
+        Set Remote plugin as ssh and set the SSH parameters
+
+        Example:
+
+        [source,python]
+        ----
+        from glustercli2 import GlusterCLI
+
+        gcli = GlusterCLI()
+        gcli.set_ssh_params(
+            "remote1.kadalu",
+            port=22,
+            user="root",
+            key="/root/.ssh/id_rsa",
+            use_sudo=False
+        )
+        ----
+        """
+        self._set_remote_plugin("ssh")
         self.remote_host = hostname
         self.ssh_port = port
         self.ssh_user = user
         self.ssh_key = key
         self.ssh_use_sudo = use_sudo
 
-    def full_command(self, cmd):
+    def _full_command(self, cmd):
         if self.remote_plugin == "docker":
             return [
                 "docker", "exec", "-i", self.remote_host,
@@ -93,16 +148,116 @@ class GlusterCLI:
         return execute(self.full_command(gcmd))
 
     def list_peers(self):
+        """
+        == Peers List
+
+        List Peers available.
+
+        Example:
+
+        [source,python]
+        ----
+        from glustercli2 import GlusterCLI
+
+        gcli = GlusterCLI()
+        gcli.list_peers()
+        ----
+        """
         return Peer.list(self)
 
     def list_volumes(self, status=False):
+        """
+        == Volumes List and Status
+
+        List Volumes available.
+
+        Example:
+
+        [source,python]
+        ----
+        from glustercli2 import GlusterCLI
+
+        gcli = GlusterCLI()
+        gcli.list_volumes()
+        gcli.list_volumes(status=True)
+        ----
+        """
         return Volume.list(self, status)
 
     def volume(self, volume_name):
+        """
+        == Get Volume instance.
+
+        Example:
+
+        [source,python]
+        ----
+        from glustercli2 import GlusterCLI
+
+        gcli = GlusterCLI()
+        gcli.volume("gvol1")
+        ----
+        """
         return Volume(self, volume_name)
 
+    def peer(self, hostname):
+        """
+        == Get Peer instance.
+
+        Example:
+
+        [source,python]
+        ----
+        from glustercli2 import GlusterCLI
+
+        gcli = GlusterCLI()
+        gcli.peer("server2.kadalu")
+        ----
+        """
+        return Peer(self, hostname)
+
     def add_peer(self, hostname):
+        """
+        == Peer Add/Probe
+
+        Add a Peer to Cluster.
+
+        Example:
+
+        [source,python]
+        ----
+        from glustercli2 import GlusterCLI
+
+        gcli = GlusterCLI()
+        gcli.add_peer("server2.kadalu")
+        ----
+        """
         Peer.add(self, hostname)
 
     def create_volume(self, name, bricks, opts):
+        """
+        == Volume Create
+
+        Create a Volume.
+
+        Example:
+
+        [source,python]
+        ----
+        from glustercli2 import GlusterCLI, VolumeCreateOptions
+
+        gcli = GlusterCLI()
+        opts = VolumeCreateOptions()
+        opts.replica_count = 3
+        opts.force = True
+
+        bricks = [
+            "server1.kadalu:/bricks/gvol1/brick1/brick",
+            "server2.kadalu:/bricks/gvol1/brick2/brick",
+            "server3.kadalu:/bricks/gvol1/brick3/brick"
+        ]
+
+        gcli.create_volume("gvol1", bricks, opts)
+        ----
+        """
         Volume.create(self, name, bricks, opts)

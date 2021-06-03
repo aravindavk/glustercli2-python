@@ -22,4 +22,19 @@ class Peer:
         cls.peer_cmd(cli, ["attach", hostname])
 
     def detach(self):
+        """
+        == Peer Delete/Detach
+
+        Delete or Detach a Peer from Cluster.
+
+        Example:
+
+        [source,python]
+        ----
+        from glustercli2 import GlusterCLI
+
+        gcli = GlusterCLI()
+        gcli.peer("server2.kadalu").delete()
+        ----
+        """
         self.peer_cmd(self.cli, ["detach", self.hostname])

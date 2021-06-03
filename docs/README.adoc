@@ -1,54 +1,249 @@
-= GlusterCLI
+= GlusterCLI - Python bindings for GlusterFS Commands
 
-[source,python]
-----
-from glustercli2 import GlusterCLI
 
-# With default settings
-gcli = GlusterCLI()
+== Peer Add/Probe
 
-# Set gluster executable path
-gcli = GlusterCLI(exec_path="/usr/local/sbin/gluster")
+Add a Peer to Cluster.
 
-# Set Current Hostname so that Localhost will be replaced
-gcli = GlusterCLI(
-    exec_path="/usr/local/sbin/gluster",
-   current_host="server1.kadalu"
-)
-----
-
-== Run via SSH
+Example:
 
 [source,python]
 ----
 from glustercli2 import GlusterCLI
 
 gcli = GlusterCLI()
+gcli.add_peer("server2.kadalu")
+----
 
+
+== Volume Create
+
+Create a Volume.
+
+Example:
+
+[source,python]
+----
+from glustercli2 import GlusterCLI, VolumeCreateOptions
+
+gcli = GlusterCLI()
+opts = VolumeCreateOptions()
+opts.replica_count = 3
+opts.force = True
+
+bricks = [
+    "server1.kadalu:/bricks/gvol1/brick1/brick",
+    "server2.kadalu:/bricks/gvol1/brick2/brick",
+    "server3.kadalu:/bricks/gvol1/brick3/brick"
+]
+
+gcli.create_volume("gvol1", bricks, opts)
+----
+
+
+== Peers List
+
+List Peers available.
+
+Example:
+
+[source,python]
+----
+from glustercli2 import GlusterCLI
+
+gcli = GlusterCLI()
+gcli.list_peers()
+----
+
+
+== Volumes List and Status
+
+List Volumes available.
+
+Example:
+
+[source,python]
+----
+from glustercli2 import GlusterCLI
+
+gcli = GlusterCLI()
+gcli.list_volumes()
+gcli.list_volumes(status=True)
+----
+
+
+== Get Peer instance.
+
+Example:
+
+[source,python]
+----
+from glustercli2 import GlusterCLI
+
+gcli = GlusterCLI()
+gcli.peer("server2.kadalu")
+----
+
+
+== Docker exec
+
+Set Remote plugin as docker and set the container name
+
+Example:
+
+[source,python]
+----
+from glustercli2 import GlusterCLI
+
+gcli = GlusterCLI()
+gcli.set_container_name("server1.kadalu")
+----
+
+
+== Execute over SSH
+
+Set Remote plugin as ssh and set the SSH parameters
+
+Example:
+
+[source,python]
+----
+from glustercli2 import GlusterCLI
+
+gcli = GlusterCLI()
 gcli.set_ssh_params(
     "remote1.kadalu",
     port=22,
-    key="/root/.ssh/id_rsa",
     user="root",
+    key="/root/.ssh/id_rsa",
     use_sudo=False
 )
-
-gcli.list_peers()
 ----
 
-== Run via Docker
+
+== Get Volume instance.
+
+Example:
 
 [source,python]
 ----
 from glustercli2 import GlusterCLI
 
 gcli = GlusterCLI()
-
-gcli.set_container_name("remote1.kadalu")
-
-gcli.list_peers()
+gcli.volume("gvol1")
 ----
 
-== Documentation
-* link:peers-management.adoc[Peers Management]
-* link:volumes-management.adoc[Volumes Management]
+
+== Volume Delete
+
+Delete the Volume.
+
+Example:
+
+[source,python]
+----
+from glustercli2 import GlusterCLI
+
+gcli = GlusterCLI()
+gcli.volume("gvol1").delete()
+----
+
+
+== Volume Info and Status
+
+Get Volume info or Status.
+
+Example:
+
+[source,python]
+----
+from glustercli2 import GlusterCLI
+
+gcli = GlusterCLI()
+gcli.volume("gvol1").info()
+gcli.volume("gvol1").info(status=True)
+----
+
+
+== Reset Volume Option
+
+Reset Volume Option.
+
+Example:
+
+[source,python]
+----
+from glustercli2 import GlusterCLI
+
+gcli = GlusterCLI()
+gcli.volume("gvol1").option_reset(["changelog.changelog"])
+----
+
+
+== Set Volume Option
+
+Set Volume Option.
+
+Example:
+
+[source,python]
+----
+from glustercli2 import GlusterCLI
+
+gcli = GlusterCLI()
+gcli.volume("gvol1").option_set({
+    "changelog.changelog": "on"
+})
+----
+
+
+== Volume Start
+
+Start the Volume.
+
+Example:
+
+[source,python]
+----
+from glustercli2 import GlusterCLI
+
+gcli = GlusterCLI()
+gcli.volume("gvol1").start()
+
+# or using force option
+gcli.volume("gvol1").start(force=True)
+----
+
+
+== Volume Stop
+
+Stop the Volume.
+
+Example:
+
+[source,python]
+----
+from glustercli2 import GlusterCLI
+
+gcli = GlusterCLI()
+gcli.volume("gvol1").stop()
+
+# or using force option
+gcli.volume("gvol1").stop(force=True)
+----
+
+
+== Peer Delete/Detach
+
+Delete or Detach a Peer from Cluster.
+
+Example:
+
+[source,python]
+----
+from glustercli2 import GlusterCLI
+
+gcli = GlusterCLI()
+gcli.peer("server2.kadalu").delete()
+----
+
