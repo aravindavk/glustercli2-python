@@ -13,6 +13,20 @@ def is_list(value):
     return hasattr(value, "__iter__")  and not isinstance(value, str)
 
 
+def to_json(data):
+    if is_list(data):
+        return json.dumps([ele.to_dict() for ele in data])
+    else:
+        return data.to_json()
+
+
+def to_dict(data):
+    if is_list(data):
+        return [ele.to_dict() for ele in data]
+    else:
+        return data.to_dict()
+
+
 class Info:
     def list_to_dict(self, value):
         values = []
@@ -38,9 +52,11 @@ class Info:
 
         return vals
 
+    def to_dict(self):
+        return self.cls_to_dict(self)
+
     def to_json(self):
-        outdata = self.cls_to_dict(self)
-        return json.dumps(outdata)
+        return json.dumps(self.to_dict())
 
     def __str__(self):
         outstr = []
